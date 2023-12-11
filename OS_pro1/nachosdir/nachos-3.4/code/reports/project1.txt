@@ -1,0 +1,56 @@
+Group Members: Nicole Cruz, Anusha Raju Kadimella, Andrew Salazar
+
+1. SimpleThread modified test report
+
+The original SimpleThread function provided in the startup code without the addition of semaphores or locks for synchronization was called 
+by threadtest in order to create 2 threads. In this case, there was no critical section or updating of shared variables. Instead, threads 0
+and 1 simply looped 5 times, in random order. After this, the threadTest function was modified to take n values as input, which would create
+n threads and loop them 5 times. We tested this with values 0 through 4, and saw that the threads executed and looped in random order.   
+
+Once the new modified version of SimpleThread was added to the threadtest class, we were able to test with and without random interrupts, using
+input values between 0 and 4. Without the random interrupts, threads appear to be synchronized and obtain the same final value. However, once
+random interrupts are enabled, the sharedVariable value begins to differ between the various thread executions. This is simply because there are
+no checks or synchronization primitives being used to organize the modification of the sharedVariable.
+
+2. Experience and Completion of Exercises
+
+We were able to complete all of the 4 exercises in Project 1, ensuring to test each portion of code using the test files provided in Canvas. 
+	
+	a. Semaphore Test
+	
+	The Semaphore test was the simplest to complete due to the fact that the Semaphore functions P() and V() were already implemmented
+	in the starter code. The most difficult part was identifying the entry and exit sections surrounding the critical section within
+	the SimpleThread() function and setting up the barrier that keeps track of the number of threads active. Once the barrier was set
+	and the sections were defined, all that was left was to create a Semaphore object within the threadtest class and call the P()
+	and V() functions in the entry and exit sections, respectively. After running with both the threadtest(int testnum) function and
+	the Semaphore_Ping() test function provided, it seemed that the threads were synchronized as expected.
+
+	b. Lock Test
+	
+	The Lock test was more difficult compared to the Semaphore Test because the relevant functions Acquire() and Release() were not 
+	implemmented beforehand. However, following the implemmentation of the Semaphore functions, it was not too difficult to understand 
+	and replicate the pattern for the Locks. The most complicated part was figuring out the logic for the isHeldByCurrentThread() function
+	and how to use it within the Release() function. However, once these functions were defined, we were able to simply create a Lock instance
+	in threadtest and invoke lock->Acquire() and lock->Release() in the entry and exit sections, respectively. We encountered some issues
+	when attmepting to run the Lock synchronization code using the threadtest(int testnum) call in main, but it was working as expected when 
+	calling the LockTest() function.
+
+	c. Condition Test
+	
+	The condition test was similar in difficulty to the lock test, as it also required us to implement the relevant functions. In this case,
+	we had to implemment Broadcast(), Wait(), and Signal(). The most challenging part was the Broadcast() function, as it was difficult to 
+	find a way to loop through and dequeue all of the threads one by one. Once that was done, we had trouble understanding how the condition
+	variables should be used in threadtest to synchronize the update of the sharedVariable. Once we realized that we had to use the Ping() test
+	to run the Condition variable implemmentation, it was wasier to debug and finish this part of the project.
+
+	d. Elevator Test
+ 
+	The elevator test was the most difficult part of the project. After watching the professor's videos, we had a good understanding of the 
+	background and requirements of the problem and began implemmenting the start() and hailElevator() functions. At first, we did not understand
+	how to hail the elevator from within hailElevator, but we eventually realized that this would mean signaling the Condition variable tied to the
+	elevator thread, as it had been set to wait to be hailed in the beginning of the start function. Additionally, we were confused on how to 
+	move the elevator up and down floors, as we assumed we would need to go to specific floors based on the toFloor attribute defined in the Person
+	struct. After meeting with the professor, he informed us that the elevator should only go up and down one floor at a time, regardles of the 
+	toFloor attribute of the passengers. He also helped us debug the code, as we were obtaining segmentation faults due to the fact that the elevator
+	was initialized using currentFloor = 1 instead of currentFloor = 0. After this, we were able to properly compile and run the ElevatorTest() function
+	from main. 
