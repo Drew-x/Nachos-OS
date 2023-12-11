@@ -1,0 +1,43 @@
+
+1. Code Design
+
+The code is set up in a similar fashion to project2. All of the I/O system calls
+are implemented within the exception.cc class. The PCB class was updated to include 
+3 new functions: AllocateFileDescriptor, GetFile, and ReleaseFileDescriptor. These
+functions allow users to manage file descripers using a map, similar to how the PCB's 
+themselves are allocated. When a process attempts to open a file, it must use 
+AllocateFileDescriptor to obtain the fileID that corresponds to the file. This id is
+also needed to preform read and write operations on the specified files. Upon closing,
+the process calls ReleaseFileDescriptor to free up the space and allow for more files 
+to be allocated. 
+
+2. How the code works
+
+Following the test file provided, the program opens the source file named "in.dat". 
+If the file cannot be opened (i.e., src is less than 0), the program exits with an error 
+code of 100. The program then prompts the user to input the name of the destination file
+and creates a file with that name. Then, the data is read from the source file, stored
+in the buf array, and written into the destination file. 
+
+3. How to run tests
+
+a. Add the provided test files (fork.c, kill.c, etc) to the 'test' directory
+	b. Update the makefile in the test directory so that the executable for the test file is created upon typing 'make'
+		b-1. Add the name of the test file (without the .c) to the list of 'all: ' in the makefile
+		b-2. Add the commands to properly compile the test file:
+
+			EX: fork.o: fork.c
+					$(CC) $(CFLAGS) -c fork.c
+				fork: fork.o start.o
+					$(LD) $(LDFLAGS) start.o fork.o -o fork.coff
+					../bin/coff2noff fork.coff fork
+
+			Here, one would replace each word 'fork' with the name of the test file you want to compile.
+
+		b-3. Navigate to the top level code directory and type 'make'. You should see the executable file be created within the test directory.
+			 If you do not see the executable, type 'make [x]', where '[x]' is the name of the file you want to compile.
+
+	c. Navigate to the userprog directory and type './nachos -x ../test/[x]', where '[x]' is the name of the file you want to run.
+
+4. Issues/Discrepancies:
+We implemented the Open, Read, Write, Close, and Create functions and made modifications to the PCB class to manage file descriptors. However, when executing the test files (cp.c and concurrent.c), we encountered issues. Specifically, the program incorrectly reported that "in.dat" did not exist, despite creating files based on the content inside "in.dat." For instance, it generated a file named "HELLO WORLD!" and then prompted the user to input a destination file name. However, it failed to accept this input. Essentially, it appeared to misinterpret the content of "in.dat" as the destination file location, resulting in the creation of "HELLO WORLD!" and an inability to accept subsequent user input due to this misinterpretation.
